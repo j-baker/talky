@@ -126,6 +126,12 @@ const settingUpdaters: {
     commands.changeMeetingStartActionSetting(value as string),
   save_debug_recordings: (value) =>
     commands.changeSaveDebugRecordingsSetting(value as boolean),
+  mcp_enabled: (value) => commands.changeMcpEnabledSetting(value as boolean),
+  mcp_port: (value) => commands.changeMcpPortSetting(value as number),
+  mcp_exposed_label_ids: (value) =>
+    commands.changeMcpExposedLabelIdsSetting(value as string[]),
+  mcp_expose_untagged: (value) =>
+    commands.changeMcpExposeUntaggedSetting(value as boolean),
 };
 
 export const useSettingsStore = create<SettingsStore>()(

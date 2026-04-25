@@ -472,6 +472,53 @@
         "notify": "Notify me"
       }
     },
+    "mcp": {
+      "title": "MCP server",
+      "enable": {
+        "label": "Enable MCP server",
+        "description": "Run a local HTTP MCP server so MCP-aware tools (Claude Desktop, Claude Code, etc.) can read notes you've explicitly chosen to expose."
+      },
+      "port": {
+        "label": "Port",
+        "description": "TCP port to listen on (1024–65535). Loopback only."
+      },
+      "url": {
+        "label": "Server URL",
+        "description": "Point your MCP client here. The client will be guided through authorization automatically.",
+        "copy": "Copy"
+      },
+      "labels": {
+        "label": "Exposed labels",
+        "description": "Notes carrying any of these labels are visible to MCP clients. Notes without any of these labels are hidden.",
+        "empty": "No labels selected — without the \"expose untagged\" toggle below, no notes will be visible.",
+        "noTags": "You haven't created any labels yet."
+      },
+      "exposeUntagged": {
+        "label": "Also expose notes with no labels",
+        "description": "When on, notes that have no labels at all are also visible. Off by default to avoid leaking notes you forgot to tag."
+      },
+      "clients": {
+        "title": "Authorized clients",
+        "empty": "No clients have authorized yet.",
+        "name": "Name",
+        "redirectUris": "Redirect URIs",
+        "lastUsed": "Last used",
+        "never": "Never",
+        "revoke": "Revoke",
+        "confirmRevoke": "Revoke this client? All of its tokens will stop working immediately."
+      },
+      "consent": {
+        "title": "Authorize MCP client",
+        "intro": "An MCP client wants to connect to Talky and read notes you've chosen to expose:",
+        "redirectsTo": "Redirects to:",
+        "scope": "Scope:",
+        "warning": "Only approve if you started this connection. After approving, the client can read every note matching your exposed-labels settings.",
+        "approve": "Approve",
+        "deny": "Deny",
+        "loading": "Loading…",
+        "expired": "This authorization request has expired or was already handled."
+      }
+    },
     "appearance": {
       "title": "Appearance",
       "fontSize": {

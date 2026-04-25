@@ -502,6 +502,54 @@ pub fn set_default_environment(app: AppHandle, id: String) -> Result<(), String>
     Ok(())
 }
 
+// ----- HTTP MCP server -----
+
+#[tauri::command]
+#[specta::specta]
+pub async fn change_mcp_enabled_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut settings = get_settings(&app);
+    settings.mcp_enabled = enabled;
+    write_settings(&app, settings);
+    let handle = app.state::<Arc<crate::mcp::McpServerHandle>>();
+    handle.reconcile(&app).await.map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn change_mcp_port_setting(app: AppHandle, port: u16) -> Result<(), String> {
+    if port < 1024 {
+        return Err("Port must be >= 1024".into());
+    }
+    let mut settings = get_settings(&app);
+    settings.mcp_port = port;
+    write_settings(&app, settings);
+    let handle = app.state::<Arc<crate::mcp::McpServerHandle>>();
+    handle.reconcile(&app).await.map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_mcp_exposed_label_ids_setting(
+    app: AppHandle,
+    label_ids: Vec<String>,
+) -> Result<(), String> {
+    let mut settings = get_settings(&app);
+    settings.mcp_exposed_label_ids = label_ids;
+    write_settings(&app, settings);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_mcp_expose_untagged_setting(app: AppHandle, expose: bool) -> Result<(), String> {
+    let mut settings = get_settings(&app);
+    settings.mcp_expose_untagged = expose;
+    write_settings(&app, settings);
+    Ok(())
+}
+
 #[tauri::command]
 #[specta::specta]
 pub async fn fetch_environment_models(

@@ -7,6 +7,7 @@ import { Alert } from "../../ui/Alert";
 import ModelSelector from "../../model-selector";
 import { UserNameSetting } from "./UserNameSetting";
 import { EnvironmentsSection } from "../environments/EnvironmentsSection";
+import { McpSettings } from "../mcp/McpSettings";
 import { UpdateBanner } from "../../update-checker";
 import { MeetingEndActionSetting } from "./MeetingEndActionSetting";
 import { MeetingStartActionSetting } from "./MeetingStartActionSetting";
@@ -32,6 +33,7 @@ export const GeneralSettings: React.FC = () => {
         <MeetingEndActionSetting />
       </SettingsGroup>
       <EnvironmentsSection />
+      <McpSettings />
     </div>
   );
 };

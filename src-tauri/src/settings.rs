@@ -277,6 +277,20 @@ pub struct AppSettings {
     /// an event to sidestep the emit-before-listener race.
     #[serde(default)]
     pub pending_promotion: bool,
+
+    // ----- HTTP MCP server -----
+    #[serde(default)]
+    pub mcp_enabled: bool,
+    #[serde(default = "default_mcp_port")]
+    pub mcp_port: u16,
+    #[serde(default)]
+    pub mcp_exposed_label_ids: Vec<String>,
+    #[serde(default)]
+    pub mcp_expose_untagged: bool,
+}
+
+pub fn default_mcp_port() -> u16 {
+    47823
 }
 
 fn default_meeting_end_action() -> String {
@@ -620,6 +634,10 @@ pub fn get_default_settings() -> AppSettings {
         coreml_model_ready: false,
         last_run_version: None,
         pending_promotion: false,
+        mcp_enabled: false,
+        mcp_port: default_mcp_port(),
+        mcp_exposed_label_ids: Vec::new(),
+        mcp_expose_untagged: false,
     }
 }
 

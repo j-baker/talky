@@ -1049,6 +1049,73 @@ async exportAllNotesAsMarkdown(directoryPath: string, includeNotes: boolean, inc
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+async changeMcpEnabledSetting(enabled: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_mcp_enabled_setting", { enabled }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async changeMcpPortSetting(port: number) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_mcp_port_setting", { port }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async changeMcpExposedLabelIdsSetting(labelIds: string[]) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_mcp_exposed_label_ids_setting", { labelIds }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async changeMcpExposeUntaggedSetting(expose: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_mcp_expose_untagged_setting", { expose }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async mcpGetStatus() : Promise<McpStatus> {
+    return await TAURI_INVOKE("mcp_get_status");
+},
+async mcpListClients() : Promise<Result<McpClientInfo[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("mcp_list_clients") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async mcpRevokeClient(clientId: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("mcp_revoke_client", { clientId }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async mcpGetPendingConsent(requestId: string) : Promise<Result<PendingConsent | null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("mcp_get_pending_consent", { requestId }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async mcpConsentResponse(requestId: string, approved: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("mcp_consent_response", { requestId, approved }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 }
 }
 
@@ -1075,7 +1142,10 @@ user_name?: string; data_directory?: string | null; font_size?: FontSize; autost
  * whether to show the promotion banner. Persisted rather than fired as
  * an event to sidestep the emit-before-listener race.
  */
-pending_promotion?: boolean }
+pending_promotion?: boolean; mcp_enabled?: boolean; mcp_port?: number; mcp_exposed_label_ids?: string[]; mcp_expose_untagged?: boolean }
+export type McpClientInfo = { id: string; name: string; redirect_uris: string[]; created_at: number; last_used_at: number | null }
+export type McpStatus = { running: boolean; port: number | null; url: string | null }
+export type PendingConsent = { request_id: string; client_id: string; client_name: string; redirect_uri: string; scope: string | null }
 export type Attachment = { id: string; session_id: string; filename: string; file_path: string; mime_type: string; file_size: number; extracted_text: string | null; created_at: number }
 export type AudioDevice = { index: string; name: string; is_default: boolean }
 export type EngineType = "Parakeet"

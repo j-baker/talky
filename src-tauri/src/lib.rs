@@ -7,6 +7,7 @@ pub mod debug_recording;
 pub mod error_events;
 mod llm_client;
 mod managers;
+mod mcp;
 #[cfg(target_os = "macos")]
 mod meeting_monitor;
 mod menu;
@@ -577,6 +578,16 @@ pub fn run() {
         // Export commands
         commands::export::export_note_as_markdown,
         commands::export::export_all_notes_as_markdown,
+        // MCP server
+        commands::settings::change_mcp_enabled_setting,
+        commands::settings::change_mcp_port_setting,
+        commands::settings::change_mcp_exposed_label_ids_setting,
+        commands::settings::change_mcp_expose_untagged_setting,
+        commands::mcp::mcp_get_status,
+        commands::mcp::mcp_list_clients,
+        commands::mcp::mcp_revoke_client,
+        commands::mcp::mcp_get_pending_consent,
+        commands::mcp::mcp_consent_response,
     ]);
 
     #[cfg(debug_assertions)] // <- Only export on non-release builds
@@ -700,6 +711,25 @@ pub fn run() {
             crash_reporter::check_for_crash_reports(&app_handle);
             error_events::startup_housekeeping(&app_handle);
             initialize_core_logic(&app_handle);
+
+            // HTTP MCP server: managed handle + reconcile against current
+            // settings (off by default). Lives across the entire process; the
+            // change_mcp_*_setting commands call reconcile() on changes.
+            match mcp::McpServerHandle::new(&app_handle) {
+                Ok(handle) => {
+                    let handle = std::sync::Arc::new(handle);
+                    app_handle.manage(handle.clone());
+                    let app_for_reconcile = app_handle.clone();
+                    tauri::async_runtime::spawn(async move {
+                        if let Err(e) = handle.reconcile(&app_for_reconcile).await {
+                            log::error!("MCP server initial reconcile failed: {e}");
+                        }
+                    });
+                }
+                Err(e) => {
+                    log::error!("Failed to initialise MCP server handle: {e}");
+                }
+            }
 
             // Fire deferred migration work now that managers are up.
             match upgrade_state {
